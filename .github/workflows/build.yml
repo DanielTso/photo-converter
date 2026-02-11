@@ -36,18 +36,22 @@ jobs:
             arch: amd64
             runner: windows-latest
             ext: .exe
+            ldflags: '-extldflags "-static"'
           - os: linux
             arch: amd64
             runner: ubuntu-latest
             ext: ''
+            ldflags: '-extldflags "-static"'
           - os: darwin
             arch: amd64
             runner: macos-latest
             ext: ''
+            ldflags: ''
           - os: darwin
             arch: arm64
             runner: macos-latest
             ext: ''
+            ldflags: ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -59,7 +63,7 @@ jobs:
           GOOS: ${{ matrix.os }}
           GOARCH: ${{ matrix.arch }}
           CGO_ENABLED: '1'
-        run: go build -ldflags '-extldflags "-static"' -o heic2jpg-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} .
+        run: go build -ldflags '${{ matrix.ldflags }}' -o heic2jpg-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
