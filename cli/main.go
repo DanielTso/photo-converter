@@ -66,23 +66,31 @@ func main() {
 		}
 	}
 
-	// Collect all HEIC files
+	// Expand globs and collect all HEIC files
 	var files []string
 	for _, input := range inputs {
-		info, err := os.Stat(input)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "warning: cannot access %s: %v\n", input, err)
-			continue
+		// Try glob expansion first (needed on Windows where the shell doesn't expand wildcards)
+		matches, err := filepath.Glob(input)
+		if err != nil || len(matches) == 0 {
+			// Not a glob pattern or no matches — treat as literal path
+			matches = []string{input}
 		}
-		if info.IsDir() {
-			dirFiles, err := collectHeicFiles(input)
+		for _, match := range matches {
+			info, err := os.Stat(match)
 			if err != nil {
-				fmt.Fprintf(os.Stderr, "warning: error reading directory %s: %v\n", input, err)
+				fmt.Fprintf(os.Stderr, "warning: cannot access %s: %v\n", match, err)
 				continue
 			}
-			files = append(files, dirFiles...)
-		} else {
-			files = append(files, input)
+			if info.IsDir() {
+				dirFiles, err := collectHeicFiles(match)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "warning: error reading directory %s: %v\n", match, err)
+					continue
+				}
+				files = append(files, dirFiles...)
+			} else {
+				files = append(files, match)
+			}
 		}
 	}
 
@@ -91,11 +99,12 @@ func main() {
 	}
 
 	// Convert each file
+	total := len(files)
 	succeeded := 0
 	failed := 0
-	for _, f := range files {
+	for i, f := range files {
 		outPath := buildOutputPath(f, outputDir)
-		fmt.Printf("Converting: %s -> %s\n", f, outPath)
+		fmt.Printf("[%d/%d] Converting: %s -> %s\n", i+1, total, f, outPath)
 		if err := convertFile(f, outPath, quality); err != nil {
 			fmt.Fprintf(os.Stderr, "  error: %v\n", err)
 			failed++
@@ -183,7 +192,7 @@ Options:
 Examples:
   heic2jpg photo.heic
   heic2jpg -q 85 *.heic
-  heic2jpg -d photos/ -o converted/
+  heic2jpg photos/ -o converted/
   heic2jpg -q 90 -o output/ photo1.heic photo2.heic`)
 }
 
