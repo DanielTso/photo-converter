@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HEIC to JPEG Converter</title>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>HEIC to JPEG Converter</h1>
+      <p class="subtitle">Drop your .heic files here — everything runs locally in your browser. No upload, no server.</p>
+    </header>
+
+    <div id="drop-zone">
+      <div class="drop-content">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p>Drag & drop .heic files here</p>
+        <span>or</span>
+        <button id="file-btn" type="button">Choose Files</button>
+        <input type="file" id="file-input" multiple accept=".heic,.heif,.HEIC,.HEIF" />
+      </div>
+    </div>
+
+    <div id="controls">
+      <div class="quality-control">
+        <label for="quality-slider">JPEG Quality: <span id="quality-value">92</span>%</label>
+        <input type="range" id="quality-slider" min="1" max="100" value="92" />
+      </div>
+      <button id="download-all-btn" type="button" disabled>Download All as ZIP</button>
+    </div>
+
+    <div id="results"></div>
+
+    <footer>
+      <p>All conversion happens in your browser using WebAssembly. No files are uploaded anywhere.</p>
+    </footer>
+  </div>
+</body>
+</html>

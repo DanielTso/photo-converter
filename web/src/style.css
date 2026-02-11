@@ -1,0 +1,252 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+/* Drop Zone */
+#drop-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #fff;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+#drop-zone.drag-over {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.drop-content svg {
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+.drop-content p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+.drop-content span {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+#file-btn {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#file-btn:hover {
+  background: #2563eb;
+}
+
+#file-input {
+  display: none;
+}
+
+/* Controls */
+#controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.quality-control {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.quality-control label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #475569;
+}
+
+#quality-slider {
+  width: 200px;
+  accent-color: #3b82f6;
+}
+
+#quality-value {
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+#download-all-btn {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+#download-all-btn:hover:not(:disabled) {
+  background: #059669;
+}
+
+#download-all-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* Results */
+#results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.result-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.result-card .preview {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+  background: #f1f5f9;
+}
+
+.result-card .info {
+  padding: 0.75rem 1rem;
+}
+
+.result-card .filename {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.result-card .meta {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+
+.result-card .download-btn {
+  display: inline-block;
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.result-card .download-btn:hover {
+  background: #2563eb;
+}
+
+/* Progress */
+.result-card.converting .info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.result-card.error .filename {
+  color: #ef4444;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 2.5rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  #app { padding: 1rem; }
+  header h1 { font-size: 1.4rem; }
+  #controls { flex-direction: column; align-items: stretch; }
+  .quality-control { flex-direction: column; align-items: flex-start; }
+  #quality-slider { width: 100%; }
+  #results { grid-template-columns: 1fr; }
+}
