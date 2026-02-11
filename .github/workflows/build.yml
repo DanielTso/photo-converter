@@ -59,7 +59,7 @@ jobs:
           GOOS: ${{ matrix.os }}
           GOARCH: ${{ matrix.arch }}
           CGO_ENABLED: '1'
-        run: go build -o heic2jpg-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} .
+        run: go build -ldflags '-extldflags "-static"' -o heic2jpg-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
