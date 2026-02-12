@@ -1,126 +1,121 @@
-# Pixshift
+# HEIC to JPEG Converter
 
-Universal image converter CLI. Convert between JPEG, PNG, GIF, WebP, TIFF, BMP, HEIC/HEIF, AVIF, and RAW camera formats (CR2, NEF, DNG).
+Portable HEIC/HEIF to JPEG converter — no installation required. Two options:
 
-## Features
+1. **Web Converter** — a single HTML file you open in any browser
+2. **CLI Tool** — a single binary for fast batch conversion
 
-- **Any-to-any conversion** between 10+ image formats
-- **Smart format detection** via magic bytes (not file extensions)
-- **Parallel processing** with configurable worker pool
-- **Metadata preservation** — keep EXIF data across conversions
-- **Watch mode** — auto-convert new files dropped into a directory
-- **Rules engine** — YAML config for batch conversion with per-format rules
-- **RAW support** — extract JPEG previews from CR2, NEF, DNG files
-- **Single binary** — no runtime dependencies
+## Web Converter (Recommended for locked-down machines)
 
-## Format Support
+The web converter is a single `index.html` file. Open it in any browser (Chrome, Edge, Firefox) and convert HEIC files by dragging and dropping. Everything runs locally — no files are uploaded anywhere.
 
-| Format | Decode | Encode | Notes |
-|--------|--------|--------|-------|
-| JPEG | Yes | Yes | stdlib |
-| PNG | Yes | Yes | stdlib |
-| GIF | Yes | Yes | stdlib |
-| WebP | Yes | Yes | CGO for encode |
-| TIFF | Yes | Yes | |
-| BMP | Yes | Yes | |
-| HEIC/HEIF | Yes | Yes | CGO |
-| AVIF | Yes | Yes | CGO |
-| CR2 | Yes | - | Extracts embedded preview |
-| NEF | Yes | - | Extracts embedded preview |
-| DNG | Yes | - | Extracts embedded preview |
+### How to use
 
-## Install
+1. Get `web/dist/index.html` (or download from [Releases](../../releases))
+2. Copy it to a USB drive or your desktop
+3. Double-click to open in your browser
+4. Drag and drop `.heic` files (or click "Choose Files")
+5. Adjust JPEG quality if needed
+6. Click "Download" on each image, or "Download All as ZIP"
 
-Download a binary from [Releases](https://github.com/DanielTso/pixshift/releases), or build from source:
+### Features
+
+- Drag-and-drop or file picker
+- Adjustable JPEG quality (1-100%)
+- Batch conversion
+- Preview thumbnails
+- Download individual files or all as ZIP
+- Works completely offline
+- No installation, no admin privileges, no server
+
+### Build from source
 
 ```bash
-git clone https://github.com/DanielTso/pixshift.git
-cd pixshift
-make build
+cd web
+npm ci
+npx webpack --config webpack.config.js
+# Output: web/dist/index.html
 ```
 
-## Usage
+## CLI Tool (For batch/power-user workflows)
+
+A single native binary that converts HEIC files from the command line. Fast — processes files in well under a second each. When given a directory, it recursively scans all subdirectories for HEIC/HEIF files.
+
+### How to use
 
 ```bash
-# Basic conversion (auto-detects input format)
-pixshift photo.heic                          # -> photo.jpg
+# Convert a single file
+./heic2jpg photo.heic
 
-# Specify output format and quality
-pixshift -f webp -q 90 photo.heic           # -> photo.webp at quality 90
+# Convert all HEIC files in a directory (recursively)
+./heic2jpg photos/
 
-# Batch convert a directory
-pixshift -f png -o converted/ photos/
+# Set JPEG quality (default: 92)
+./heic2jpg -q 85 photo.heic
 
-# Parallel workers
-pixshift -j 8 -f webp -o output/ photos/
+# Output to a specific directory
+./heic2jpg -o converted/ photos/
 
-# Preserve EXIF metadata
-pixshift -m -f jpg photo.heic
+# Convert to PNG instead of JPEG
+./heic2jpg -f png photos/
 
-# Extract JPEG preview from RAW
-pixshift photo.CR2
-
-# Watch mode: auto-convert new files
-pixshift -w -f webp ~/Pictures/
-
-# Rules mode from config file
-pixshift -c pixshift.yaml photos/
-
-# Preview what would happen
-pixshift --dry-run -f webp photos/
+# Use 4 parallel workers for faster batch conversion
+./heic2jpg -j 4 -o converted/ photos/
 ```
 
-## Flags
+### Options
 
-| Flag | Description |
-|------|-------------|
-| `-f, --format` | Output format (jpg, png, gif, webp, tiff, bmp, heic, avif) |
-| `-q, --quality` | Encoding quality 1-100 (default: 92) |
-| `-j, --jobs` | Number of parallel workers (default: CPU count) |
-| `-o, --output` | Output directory |
-| `-r, --recursive` | Process directories recursively |
-| `-m, --preserve-metadata` | Preserve EXIF metadata |
-| `-w, --watch` | Watch mode |
-| `-c, --config` | Rules config file |
-| `--overwrite` | Overwrite existing files |
-| `--dry-run` | Preview without converting |
-| `-v, --verbose` | Verbose output |
-| `-V, --version` | Show version |
+| Flag | Description | Default |
+|------|-------------|---------|
+| `-q, --quality <1-100>` | JPEG quality (ignored for PNG) | 92 |
+| `-f, --format <jpg\|png>` | Output format | jpg |
+| `-j, --jobs <N>` | Parallel workers | Number of CPUs |
+| `-o, --output <dir>` | Output directory | Same as input file |
+| `-h, --help` | Show help | |
 
-## Rules Config
-
-Create a `pixshift.yaml` to define per-format conversion rules:
-
-```yaml
-rules:
-  - name: heic-to-webp
-    format: heic
-    output: webp
-    quality: 90
-
-  - name: raw-to-jpeg
-    format: cr2
-    output: jpg
-    quality: 95
-
-  - name: default
-    output: jpg
-    quality: 92
-```
-
-Rules are evaluated in order. First match wins. See [pixshift.yaml.example](pixshift.yaml.example) for more examples.
-
-## Building
-
-Requires Go 1.24+ and CGO (for HEIC, AVIF, and WebP encoding).
+### Build from source
 
 ```bash
-make build          # Build for current platform
-make build-static   # Build with static linking (Linux)
-make test           # Run tests
-make lint           # Run linter
+# Build for current platform
+cd cli
+go build -o heic2jpg .
+
+# Build for Windows (requires mingw-w64 on Linux, or build on Windows directly)
+CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc GOOS=windows GOARCH=amd64 go build -o heic2jpg.exe .
 ```
 
-## License
+### Pre-built binaries
 
-Apache 2.0 — see [LICENSE](LICENSE).
+Pre-built binaries for Windows, macOS, and Linux are available from [Releases](../../releases). Tag a version (`git tag v1.0.0 && git push --tags`) to trigger automated builds via GitHub Actions.
+
+## Project Structure
+
+```
+photo-converter/
+├── web/                  # Browser-based converter
+│   ├── src/
+│   │   ├── index.html    # HTML template
+│   │   ├── index.js      # Converter logic + UI
+│   │   └── style.css     # Styles
+│   ├── dist/
+│   │   └── index.html    # Built single-file converter (1.5 MB)
+│   ├── webpack.config.js
+│   └── package.json
+├── cli/                  # Command-line converter
+│   ├── main.go           # CLI source
+│   └── go.mod
+├── .github/workflows/
+│   └── build.yml         # CI: builds all platforms + creates releases
+├── Makefile
+└── README.md
+```
+
+## Which one should I use?
+
+| Scenario | Use |
+|----------|-----|
+| Work laptop, can't install anything | **Web converter** — just open the HTML file |
+| Need to convert a few photos | **Web converter** |
+| Need to batch-convert hundreds of files | **CLI tool** |
+| Want maximum speed | **CLI tool** (~0.5s/image vs ~5s/image) |
+| Not comfortable with command line | **Web converter** |
