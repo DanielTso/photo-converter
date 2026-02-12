@@ -39,7 +39,7 @@ npx webpack --config webpack.config.js
 
 ## CLI Tool (For batch/power-user workflows)
 
-A single native binary that converts HEIC files from the command line. Fast — processes files in well under a second each.
+A single native binary that converts HEIC files from the command line. Fast — processes files in well under a second each. When given a directory, it recursively scans all subdirectories for HEIC/HEIF files.
 
 ### How to use
 
@@ -47,7 +47,7 @@ A single native binary that converts HEIC files from the command line. Fast — 
 # Convert a single file
 ./heic2jpg photo.heic
 
-# Convert all HEIC files in a directory
+# Convert all HEIC files in a directory (recursively)
 ./heic2jpg photos/
 
 # Set JPEG quality (default: 92)
@@ -55,13 +55,21 @@ A single native binary that converts HEIC files from the command line. Fast — 
 
 # Output to a specific directory
 ./heic2jpg -o converted/ photos/
+
+# Convert to PNG instead of JPEG
+./heic2jpg -f png photos/
+
+# Use 4 parallel workers for faster batch conversion
+./heic2jpg -j 4 -o converted/ photos/
 ```
 
 ### Options
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `-q, --quality <1-100>` | JPEG quality | 92 |
+| `-q, --quality <1-100>` | JPEG quality (ignored for PNG) | 92 |
+| `-f, --format <jpg\|png>` | Output format | jpg |
+| `-j, --jobs <N>` | Parallel workers | Number of CPUs |
 | `-o, --output <dir>` | Output directory | Same as input file |
 | `-h, --help` | Show help | |
 

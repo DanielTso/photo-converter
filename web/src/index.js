@@ -10,6 +10,7 @@ const qualitySlider = document.getElementById('quality-slider');
 const qualityValue = document.getElementById('quality-value');
 const downloadAllBtn = document.getElementById('download-all-btn');
 const resultsContainer = document.getElementById('results');
+const progressEl = document.getElementById('progress');
 
 // --- State ---
 const convertedFiles = []; // { name, blob, url }
@@ -31,8 +32,14 @@ dropZone.addEventListener('click', () => {
 
 fileInput.addEventListener('change', () => {
   if (fileInput.files.length > 0) {
-    handleFiles(Array.from(fileInput.files));
+    const files = Array.from(fileInput.files);
     fileInput.value = '';
+    if (files.length > 50) {
+      if (!confirm(`You selected ${files.length} files. Large batches may cause your browser to slow down or run out of memory. Consider using the CLI tool for big conversions.\n\nContinue anyway?`)) {
+        return;
+      }
+    }
+    handleFiles(files);
   }
 });
 
@@ -53,6 +60,11 @@ dropZone.addEventListener('drop', (e) => {
     /\.heic$/i.test(f.name) || /\.heif$/i.test(f.name)
   );
   if (files.length > 0) {
+    if (files.length > 50) {
+      if (!confirm(`You selected ${files.length} files. Large batches may cause your browser to slow down or run out of memory. Consider using the CLI tool for big conversions.\n\nContinue anyway?`)) {
+        return;
+      }
+    }
     handleFiles(files);
   }
 });
@@ -63,7 +75,10 @@ window.addEventListener('drop', (e) => e.preventDefault());
 
 // --- Conversion Pipeline ---
 async function handleFiles(files) {
-  for (const file of files) {
+  const total = files.length;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    progressEl.textContent = `Converting ${i + 1} of ${total}...`;
     const card = createCard(file.name);
     resultsContainer.appendChild(card);
     // Process sequentially to avoid memory pressure
@@ -73,6 +88,7 @@ async function handleFiles(files) {
       showError(card, file.name, err.message);
     }
   }
+  progressEl.textContent = `${total} of ${total} converted`;
 }
 
 function createCard(filename) {

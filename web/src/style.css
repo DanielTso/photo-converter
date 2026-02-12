@@ -148,6 +148,20 @@ header h1 {
   cursor: not-allowed;
 }
 
+/* Progress */
+#progress {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  margin-bottom: 1rem;
+  min-height: 1.25rem;
+}
+
+#progress:empty {
+  display: none;
+}
+
 /* Results */
 #results {
   display: grid;
