@@ -1,0 +1,44 @@
+# pixshift.yaml - Example rules configuration
+#
+# Rules are evaluated in order. First match wins.
+# Each rule can match by input format, filename glob, or both.
+
+rules:
+  # Convert all HEIC photos to WebP at high quality
+  - name: heic-to-webp
+    format: heic
+    output: webp
+    quality: 90
+
+  # Convert RAW camera files to JPEG
+  - name: raw-to-jpeg
+    format: cr2
+    output: jpg
+    quality: 95
+
+  - name: nef-to-jpeg
+    format: nef
+    output: jpg
+    quality: 95
+
+  - name: dng-to-jpeg
+    format: dng
+    output: jpg
+    quality: 95
+
+  # Convert AVIF to PNG (lossless)
+  - name: avif-to-png
+    format: avif
+    output: png
+
+  # Convert specific files by pattern
+  - name: thumbnails-to-webp
+    glob: "thumb_*"
+    output: webp
+    quality: 80
+    dir: thumbnails/
+
+  # Catch-all: convert everything else to JPEG
+  - name: default
+    output: jpg
+    quality: 92
